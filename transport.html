@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>City Transit Explorer</title>
+  <meta name="description" content="Plan faster, greener trips across bus, metro, bike, and walking." />
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827; --muted:#94a3b8; --text:#e5e7eb;
+      --accent:#22d3ee; --card:#0b1220; --ok:#22c55e; --warn:#f59e0b;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text); background:linear-gradient(180deg,#020617, #0b1220 40%, #0f172a);
+    }
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(140%) blur(6px);
+      background:rgba(2,6,23,.65); border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .wrap{max-width:1100px; margin:auto; padding:18px;}
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:38px; height:38px; border-radius:50%; display:grid; place-items:center;
+      background:radial-gradient(circle at 30% 30%, var(--accent), transparent 60%), #020617;
+      box-shadow:0 0 40px rgba(34,211,238,.25) inset, 0 10px 30px rgba(0,0,0,.5);
+      font-weight:800; color:#081018;
+    }
+    .title{font-weight:700; letter-spacing:.3px}
+    .grid{display:grid; gap:18px; grid-template-columns:1fr}
+    @media(min-width:880px){ .grid{grid-template-columns: 1.2fr .8fr;} }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius); padding:18px; box-shadow:0 10px 40px rgba(0,0,0,.35);
+    }
+    h1{font-size:clamp(22px,2.5vw,30px); margin:8px 0 2px}
+    h2{font-size:clamp(18px,2.2vw,24px); margin:0 0 10px}
+    p{color:var(--muted); line-height:1.6}
+    label{display:block; font-weight:600; margin:6px 0 8px}
+    input, select, button{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12);
+      background:rgba(2,6,23,.55); color:var(--text);
+    }
+    button{
+      cursor:pointer; border:1px solid rgba(34,211,238,.35);
+      transition:transform .05s ease, box-shadow .2s ease;
+      box-shadow:0 0 0 0 rgba(34,211,238,.0);
+    }
+    button:hover{ transform:translateY(-1px); box-shadow:0 8px 24px rgba(34,211,238,.25) }
+    .row{display:grid; gap:10px; grid-template-columns:1fr}
+    @media(min-width:600px){ .row{grid-template-columns:1fr 1fr} }
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); font-size:12px;}
+    .list{display:grid; gap:12px; margin-top:10px}
+    .result{
+      border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:12px 14px;
+      background:linear-gradient(180deg, rgba(2,6,23,.6), rgba(2,6,23,.3));
+    }
+    .result .meta{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
+    .pill{padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.12)}
+    .ok{border-color:rgba(34,197,94,.35)}
+    .warn{border-color:rgba(245,158,11,.35)}
+    footer{opacity:.7; text-align:center; padding:30px}
+    .sr-only{position:absolute; left:-9999px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap brand" role="banner">
+      <div class="logo" aria-hidden="true">↦</div>
+      <div>
+        <div class="title">City Transit Explorer</div>
+        <div class="badge" aria-label="App purpose">Plan faster, greener trips</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap grid" role="main">
+    <!-- Planner -->
+    <section class="card" aria-labelledby="planner-title">
+      <h1 id="planner-title">Plan your trip</h1>
+      <p>Compare bus, metro, cycling, and walking. We highlight the **fastest** and **lowest-carbon** options.</p>
+
+      <form id="planner" novalidate>
+        <div class="row">
+          <div>
+            <label for="from">From</label>
+            <input id="from" name="from" placeholder="e.g., Central Station" required />
+          </div>
+          <div>
+            <label for="to">To</label>
+            <input id="to" name="to" placeholder="e.g., Riverside Park" required />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label for="mode">Preferred mode</label>
+            <select id="mode" name="mode" aria-describedby="mode-help">
+              <option value="any">Any</option>
+              <option value="bus">Bus</option>
+              <option value="metro">Metro</option>
+              <option value="bike">Bike</option>
+              <option value="walk">Walk</option>
+            </select>
+            <div id="mode-help" class="sr-only">Choose a transport mode to filter routes.</div>
+          </div>
+          <div>
+            <label for="leave">Leave at</label>
+            <input id="leave" name="leave" type="time" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button type="submit" aria-label="Search routes">Search routes</button>
+          <button type="button" id="clear" aria-label="Clear form">Clear</button>
+        </div>
+      </form>
+
+      <div id="results" class="list" aria-live="polite" aria-busy="false"></div>
+    </section>
+
+    <!-- Info / Tips -->
+    <aside class="card" aria-labelledby="tips-title">
+      <h2 id="tips-title">Travel tips</h2>
+      <ul>
+        <li>Metro is usually fastest for >5 km trips.</li>
+        <li>Bike for trips under 3 km to save time and emissions.</li>
+        <li>Off-peak (after 10 AM, before 4 PM) means fewer delays.</li>
+        <li>Walking adds 10–15 min flexibility between transfers.</li>
+      </ul>
+
+      <h2 style="margin-top:18px">Service status</h2>
+      <div class="result">
+        <strong>Blue Metro Line</strong>
+        <div class="meta">
+          <span class="pill ok">On time</span>
+          <span class="pill">Headway: 6 min</span>
+        </div>
+      </div>
+      <div class="result">
+        <strong>Bus 42</strong>
+        <div class="meta">
+          <span class="pill warn">Delay: 7 min</span>
+          <span class="pill">Crowding: Medium</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer role="contentinfo">
+    <small>© 2025 City Transit Explorer • Built for speed and sustainability</small>
+  </footer>
+
+  <script>
+    // Demo data to simulate simple route options
+    const ROUTES = [
+      {mode:"metro", time:18, cost:25, co2:80, desc:"Blue Line → Walk 600 m"},
+      {mode:"bus", time:26, cost:15, co2:120, desc:"Bus 42 → Bus 19"},
+      {mode:"bike", time:22, cost:0, co2:0, desc:"Public bike dock → Park"},
+      {mode:"walk", time:38, cost:0, co2:0, desc:"Direct walk through riverfront"},
+      {mode:"metro", time:20, cost:25, co2:75, desc:"Green Line express"},
+    ];
+
+    const form = document.getElementById('planner');
+    const results = document.getElementById('results');
+    const clearBtn = document.getElementById('clear');
+
+    function render(routes){
+      results.innerHTML = "";
+      if(!routes.length){
+        results.innerHTML = "<p>No routes found. Try a different mode.</p>";
+        return;
+      }
+      const bestTime = Math.min(...routes.map(r=>r.time));
+      const bestCO2  = Math.min(...routes.map(r=>r.co2));
+
+      routes.forEach(r=>{
+        const el = document.createElement('div');
+        el.className = 'result';
+        const badges = [];
+        if(r.time === bestTime) badges.push('<span class="pill ok">Fastest</span>');
+        if(r.co2 === bestCO2) badges.push('<span class="pill ok">Lowest CO₂</span>');
+        badges.push(`<span class="pill">Time: ${r.time} min</span>`);
+        badges.push(`<span class="pill">Cost: ₹${r.cost}</span>`);
+        badges.push(`<span class="pill">CO₂: ${r.co2} g</span>`);
+
+        el.innerHTML = `
+          <strong>${r.mode.toUpperCase()}</strong> — ${r.desc}
+          <div class="meta">${badges.join('')}</div>
+        `;
+        results.appendChild(el);
+      });
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      results.setAttribute('aria-busy','true');
+
+      const mode = (new FormData(form).get('mode')) || 'any';
+      const filtered = ROUTES.filter(r => mode === 'any' ? true : r.mode === mode);
+
+      // Simulate small processing delay
+      setTimeout(()=>{
+        render(filtered);
+        results.setAttribute('aria-busy','false');
+      }, 300);
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      form.reset();
+      results.innerHTML = "";
+    });
+
+    // Initial render for demo
+    render(ROUTES);
+  </script>
+</body>
+</html>
