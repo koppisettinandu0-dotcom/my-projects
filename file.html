@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transportation Menu Card</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0077b6;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+    }
+    .container {
+      margin: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: none;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: #0077b6;
+      color: white;
+    }
+    button:hover {
+      background: #005f86;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>🚖 Transportation Menu Card</header>
+
+  <!-- Home Page -->
+  <div id="home" class="container" style="display:block;">
+    <h2>Welcome to Transport Service</h2>
+    <p>Select your lane type and place an order easily.</p>
+    <button onclick="showPage('laneTypes')">Order</button>
+  </div>
+
+  <!-- Lane Types -->
+  <div id="laneTypes" class="container">
+    <h2>Select Lane Type</h2>
+    <button onclick="selectLane('Highway', 200)">Highway - $200</button>
+    <button onclick="selectLane('City Lane', 100)">City Lane - $100</button>
+    <button onclick="selectLane('Village Lane', 50)">Village Lane - $50</button>
+    <button onclick="showPage('home')">Back</button>
+  </div>
+
+  <!-- Subparts -->
+  <div id="subParts" class="container">
+    <h2 id="selectedLaneTitle">Subparts</h2>
+    <div id="subPartsOptions"></div>
+    <button onclick="completeOrder()">Completed Order</button>
+    <button onclick="showPage('laneTypes')">Back</button>
+  </div>
+
+  <!-- Order Summary -->
+  <div id="summary" class="container">
+    <h2>Order Summary</h2>
+    <p id="orderDetails"></p>
+    <label>Enter Table Number: </label>
+    <input type="text" id="tableNumber" placeholder="Enter number"><br><br>
+    <button onclick="showPage('payment')">Proceed to Payment</button>
+  </div>
+
+  <!-- Payment -->
+  <div id="payment" class="container">
+    <h2>Payment Options</h2>
+    <button onclick="paymentSuccess()">Pay with Card</button>
+    <button onclick="paymentSuccess()">Pay with UPI</button>
+    <button onclick="paymentSuccess()">Pay with Cash</button>
+  </div>
+
+  <!-- Success -->
+  <div id="success" class="container">
+    <h2>✅ Order Successful!</h2>
+    <p>Thank you! Your transportation order has been placed.</p>
+    <button onclick="showPage('home')">Back to Home</button>
+  </div>
+
+  <script>
+    let selectedLane = '';
+    let selectedPrice = 0;
+    let selectedSubpart = '';
+
+    function showPage(pageId) {
+      document.querySelectorAll('.container').forEach(div => div.style.display = 'none');
+      document.getElementById(pageId).style.display = 'block';
+    }
+
+    function selectLane(lane, price) {
+      selectedLane = lane;
+      selectedPrice = price;
+      document.getElementById('selectedLaneTitle').innerText = lane + " Subparts";
+
+      let subpartsHtml = '';
+      if (lane === 'Highway') {
+        subpartsHtml = `<button onclick="chooseSubpart('Expressway')">Expressway</button>
+                        <button onclick="chooseSubpart('Toll Road')">Toll Road</button>`;
+      } else if (lane === 'City Lane') {
+        subpartsHtml = `<button onclick="chooseSubpart('Main Road')">Main Road</button>
+                        <button onclick="chooseSubpart('Service Road')">Service Road</button>`;
+      } else if (lane === 'Village Lane') {
+        subpartsHtml = `<button onclick="chooseSubpart('Mud Road')">Mud Road</button>
+                        <button onclick="chooseSubpart('Stone Path')">Stone Path</button>`;
+      }
+      document.getElementById('subPartsOptions').innerHTML = subpartsHtml;
+      showPage('subParts');
+    }
+
+    function chooseSubpart(subpart) {
+      selectedSubpart = subpart;
+      alert("You selected: " + subpart);
+    }
+
+    function completeOrder() {
+      if (!selectedSubpart) {
+        alert("Please select a subpart before completing the order.");
+        return;
+      }
+      document.getElementById('orderDetails').innerText =
+        `Lane Type: ${selectedLane}\nSubpart: ${selectedSubpart}\nTotal Price: $${selectedPrice}`;
+      showPage('summary');
+    }
+
+    function paymentSuccess() {
+      showPage('success');
+    }
+  </script>
+</body>
+</html>
