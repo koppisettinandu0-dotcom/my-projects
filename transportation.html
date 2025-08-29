@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #0056b3;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+        }
+        nav {
+            background-color: #444;
+            color: white;
+            padding: 0.5em 0;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0 1em;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+        }
+        .transport-item {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to the Transportation Hub</h1>
+    </header>
+
+    <nav>
+        <a href="#buses">Buses</a>
+        <a href="#trains">Trains</a>
+        <a href="#bikes">Bikes</a>
+    </nav>
+
+    <div class="container">
+        <section id="buses" class="transport-item">
+            <h2>Buses</h2>
+            <p>Our bus system provides a reliable and extensive network covering all major city routes. With real-time tracking, you can plan your commute with precision.</p>
+        </section>
+
+        <section id="trains" class="transport-item">
+            <h2>Trains</h2>
+            <p>The train network offers high-speed travel for longer distances. Our state-of-the-art trains are an eco-friendly way to connect with the suburbs and beyond.</p>
+        </section>
+
+        <section id="bikes" class="transport-item">
+            <h2>Bikes</h2>
+            <p>Explore the city on two wheels! Our bike-sharing program is perfect for short trips and leisurely rides, with stations conveniently located throughout the city.</p>
+        </section>
+    </div>
+
+</body>
+</html>
